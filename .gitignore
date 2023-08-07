@@ -44,7 +44,6 @@ pyvenv*/
 !.cspell.json
 !.github/*.yml
 !.github/*/*.yml
-!.gitpod.yml
 !.markdownlint.json
 !.pre-commit-config.yaml
 !.pre-commit-hooks.yaml

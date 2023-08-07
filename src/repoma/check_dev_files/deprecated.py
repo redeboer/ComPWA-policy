@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 def remove_deprecated_tools() -> None:
     executor = Executor()
     executor(_remove_flake8)
+    executor(_remove_gitpod)
     executor(_remove_isort)
     executor(_remove_pydocstyle)
     executor(_remove_pylint)
@@ -38,6 +39,15 @@ def _remove_flake8() -> None:
     executor(remove_precommit_hook, "flake8")
     executor(remove_precommit_hook, "nbqa-flake8")
     executor(remove_settings, ["flake8.importStrategy"])
+    executor.finalize()
+
+
+def _remove_gitpod() -> None:
+    executor = Executor()
+    executor(__remove_configs, [".gitpod.yml"])
+    executor(__remove_from_gitignore, "!.gitpod.yml")
+    executor(__remove_nbqa_option, "flake8")
+    executor(remove_badge, r".*https://gitpod\.io")
     executor.finalize()
 
 
@@ -115,6 +125,20 @@ def __remove_file(path: str) -> None:
         return
     os.remove(path)
     msg = f"Removed {path}"
+    raise PrecommitError(msg)
+
+
+def __remove_from_gitignore(pattern: str) -> None:
+    if not CONFIG_PATH.gitignore.exists():
+        return
+    with open(CONFIG_PATH.gitignore) as f:
+        lines = f.readlines()
+    filtered_lines = [line for line in lines if line.strip() != pattern]
+    if filtered_lines == lines:
+        return
+    with open(CONFIG_PATH.gitignore, "w") as f:
+        f.writelines(filtered_lines)
+    msg = f"Updated {CONFIG_PATH.gitignore}"
     raise PrecommitError(msg)
 
 

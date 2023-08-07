@@ -25,7 +25,6 @@
     ".constraints/*.txt",
     ".editorconfig",
     ".gitignore",
-    ".gitpod.*",
     ".mypy.ini",
     ".pre-commit-config.yaml",
     ".prettierignore",

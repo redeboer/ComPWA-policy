@@ -16,7 +16,6 @@ from . import (
     github_labels,
     github_templates,
     github_workflows,
-    gitpod,
     mypy,
     nbstripout,
     precommit,
@@ -76,12 +75,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         action="store_true",
         default=False,
         help="Skip check that concern config files for Python projects.",
-    )
-    parser.add_argument(
-        "--no-gitpod",
-        action="store_true",
-        default=False,
-        help="Do not create a GitPod config file",
     )
     parser.add_argument(
         "--no-prettierrc",
@@ -190,8 +183,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         executor(setup_cfg.main, args.ignore_author)
     executor(remove_deprecated_tools)
     executor(vscode.main)
-    if not args.no_gitpod:
-        executor(gitpod.main)
     executor(precommit.main)
     return executor.finalize(exception=False)
 
