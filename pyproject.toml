@@ -157,9 +157,6 @@ sty = {features = ["sty", "types"], solve-group = "default"}
 test = {features = ["test"], solve-group = "default"}
 types = {features = ["types"], solve-group = "default"}
 
-[tool.pixi.pypi-dependencies]
-compwa-policy = {path = ".", editable = true}
-
 [tool.pyright]
 exclude = [
     "**/.git",

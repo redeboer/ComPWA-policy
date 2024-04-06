@@ -53,7 +53,6 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7c/c4/366a09036c07f46eb8c9b2af39c97f502ef24f11f2a6e4d763655d9f2708/traitlets-5.14.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/01/f3/936e209267d6ef7510322191003885de524fc48d1b43269810cd589ceaf5/typing_extensions-4.11.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7d/cd/d7460c9a869b16c3dd4e1e403cce337df165368c71d6af229a74699622ce/wheel-0.43.0-py3-none-any.whl
-      - pypi: .
   dev:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
@@ -107,7 +106,6 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7c/c4/366a09036c07f46eb8c9b2af39c97f502ef24f11f2a6e4d763655d9f2708/traitlets-5.14.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/01/f3/936e209267d6ef7510322191003885de524fc48d1b43269810cd589ceaf5/typing_extensions-4.11.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7d/cd/d7460c9a869b16c3dd4e1e403cce337df165368c71d6af229a74699622ce/wheel-0.43.0-py3-none-any.whl
-      - pypi: .
   doc:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
@@ -161,7 +159,6 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7c/c4/366a09036c07f46eb8c9b2af39c97f502ef24f11f2a6e4d763655d9f2708/traitlets-5.14.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/01/f3/936e209267d6ef7510322191003885de524fc48d1b43269810cd589ceaf5/typing_extensions-4.11.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7d/cd/d7460c9a869b16c3dd4e1e403cce337df165368c71d6af229a74699622ce/wheel-0.43.0-py3-none-any.whl
-      - pypi: .
   sty:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
@@ -215,7 +212,6 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7c/c4/366a09036c07f46eb8c9b2af39c97f502ef24f11f2a6e4d763655d9f2708/traitlets-5.14.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/01/f3/936e209267d6ef7510322191003885de524fc48d1b43269810cd589ceaf5/typing_extensions-4.11.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7d/cd/d7460c9a869b16c3dd4e1e403cce337df165368c71d6af229a74699622ce/wheel-0.43.0-py3-none-any.whl
-      - pypi: .
   test:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
@@ -269,7 +265,6 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7c/c4/366a09036c07f46eb8c9b2af39c97f502ef24f11f2a6e4d763655d9f2708/traitlets-5.14.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/01/f3/936e209267d6ef7510322191003885de524fc48d1b43269810cd589ceaf5/typing_extensions-4.11.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7d/cd/d7460c9a869b16c3dd4e1e403cce337df165368c71d6af229a74699622ce/wheel-0.43.0-py3-none-any.whl
-      - pypi: .
   types:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
@@ -323,7 +318,6 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7c/c4/366a09036c07f46eb8c9b2af39c97f502ef24f11f2a6e4d763655d9f2708/traitlets-5.14.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/01/f3/936e209267d6ef7510322191003885de524fc48d1b43269810cd589ceaf5/typing_extensions-4.11.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7d/cd/d7460c9a869b16c3dd4e1e403cce337df165368c71d6af229a74699622ce/wheel-0.43.0-py3-none-any.whl
-      - pypi: .
 packages:
 - kind: conda
   name: _libgcc_mutex
@@ -454,50 +448,6 @@ packages:
   - colorama ; platform_system == 'Windows'
   - importlib-metadata ; python_version < '3.8'
   requires_python: '>=3.7'
-- kind: pypi
-  name: compwa-policy
-  version: 0.3.6.dev1+g66bfb3f
-  path: .
-  sha256: 0b5405897e62a98f67a82008e16f2b69029734e88ea75c3c8a8aa9c4f830abfa
-  requires_dist:
-  - pyyaml
-  - attrs >=20.1.0
-  - html2text
-  - ini2toml
-  - nbformat
-  - pathspec
-  - pip-tools
-  - ruamel-yaml
-  - tomlkit
-  - rtoml
-  - typing-extensions ; python_version < '3.12.0'
-  - compwa-policy[doc] ; extra == 'dev'
-  - compwa-policy[sty] ; extra == 'dev'
-  - compwa-policy[test] ; extra == 'dev'
-  - labels ; extra == 'dev'
-  - sphinx-autobuild ; extra == 'dev'
-  - tox >=1.9 ; extra == 'dev'
-  - sphinx ; extra == 'doc'
-  - myst-parser ; extra == 'doc'
-  - sphinx-api-relink >=0.0.4 ; extra == 'doc'
-  - sphinx-api-relink ; extra == 'doc'
-  - sphinx-argparse ; extra == 'doc'
-  - sphinx-book-theme ; extra == 'doc'
-  - sphinx-codeautolink ; extra == 'doc'
-  - sphinx-copybutton ; extra == 'doc'
-  - compwa-policy[types] ; extra == 'sty'
-  - mypy ; extra == 'sty'
-  - pre-commit >=1.4.0 ; extra == 'sty'
-  - ruff ; extra == 'sty'
-  - pytest ; extra == 'test'
-  - pytest-cov ; extra == 'test'
-  - pytest-xdist ; extra == 'test'
-  - pytest ; extra == 'types'
-  - sphinx-api-relink >=0.0.3 ; extra == 'types'
-  - types-pyyaml ; extra == 'types'
-  - types-toml ; extra == 'types'
-  requires_python: '>=3.7'
-  editable: true
 - kind: pypi
   name: fastjsonschema
   version: 2.19.1
