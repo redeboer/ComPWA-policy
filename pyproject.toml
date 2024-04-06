@@ -160,7 +160,7 @@ sty = {features = ["sty", "types"], solve-group = "default"}
 test = {features = ["test"], solve-group = "default"}
 types = {features = ["types"], solve-group = "default"}
 
-[tool.pixi.tasks]
+[tool.pixi.feature.dev.tasks]
 cov = """
 pytest \
     --cov-fail-under=40 \
