@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING
 import yaml
 from tomlkit import inline_table, string
 
-from compwa_policy.errors import PrecommitError
-from compwa_policy.utilities import CONFIG_PATH, append_safe, vscode
+from compwa_policy.utilities import CONFIG_PATH, vscode
 from compwa_policy.utilities.cfg import open_config
 from compwa_policy.utilities.executor import Executor
+from compwa_policy.utilities.file import LineEditor
 from compwa_policy.utilities.match import filter_files
 from compwa_policy.utilities.pyproject import (
     ModifiablePyproject,
@@ -50,7 +50,9 @@ def _update_pixi_configuration(
     dev_python_version: PythonVersion,
     outsource_pixi_to_tox: bool,
 ) -> None:
-    with Executor() as do, ModifiablePyproject.load() as pyproject:
+    with Executor() as do, ModifiablePyproject.load() as pyproject, LineEditor.load(
+        CONFIG_PATH.gitignore
+    ) as gitignore, LineEditor.load(CONFIG_PATH.gitattributes) as gitattributes:
         do(__configure_setuptools_scm, pyproject)
         do(__define_minimal_project, pyproject)
         if is_python_package:
@@ -71,8 +73,11 @@ def _update_pixi_configuration(
         if outsource_pixi_to_tox:
             do(__outsource_pixi_tasks_to_tox, pyproject)
         if has_pixi_config(pyproject):
-            do(__update_gitattributes)
-            do(__update_gitignore)
+            do(
+                gitattributes.append_safe,
+                "pixi.lock linguist-language=YAML linguist-generated=true",
+            )
+            do(gitignore.append_safe, ".pixi/")
 
 
 def __configure_setuptools_scm(pyproject: ModifiablePyproject) -> None:
@@ -341,22 +346,6 @@ def __set_dev_python_version(
         dependencies["python"] = version
         msg = f"Set Python version for Pixi developer environment to {version}"
         pyproject.changelog.append(msg)
-
-
-def __update_gitattributes() -> None:
-    expected_line = "pixi.lock linguist-language=YAML linguist-generated=true"
-    if append_safe(expected_line, CONFIG_PATH.gitattributes):
-        msg = (
-            f"Added linguist definition for pixi.lock under {CONFIG_PATH.gitattributes}"
-        )
-        raise PrecommitError(msg)
-
-
-def __update_gitignore() -> None:
-    ignore_path = ".pixi/"
-    if append_safe(ignore_path, CONFIG_PATH.gitignore):
-        msg = f"Added {ignore_path} under {CONFIG_PATH.gitignore}"
-        raise PrecommitError(msg)
 
 
 def __update_dev_environment(pyproject: ModifiablePyproject) -> None:
