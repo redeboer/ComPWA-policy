@@ -5,7 +5,6 @@ from __future__ import annotations
 import io
 import sys
 from collections import abc
-from contextlib import AbstractContextManager
 from pathlib import Path
 from textwrap import indent
 from typing import (
@@ -27,6 +26,7 @@ from attrs import field, frozen
 from compwa_policy.errors import PrecommitError
 from compwa_policy.utilities import CONFIG_PATH
 from compwa_policy.utilities.cfg import open_config
+from compwa_policy.utilities.file import ModifiableFile
 from compwa_policy.utilities.pyproject.getters import (
     PythonVersion,
     get_package_name,
@@ -69,8 +69,10 @@ class Pyproject:
     _source: IO | Path | None = field(default=None)
 
     @classmethod
-    def load(cls: type[T], source: IO | Path | str = CONFIG_PATH.pyproject) -> T:
+    def load(cls, source: IO | Path | str | None = None) -> Self:
         """Load a :code:`pyproject.toml` file from a file, I/O stream, or `str`."""
+        if source is None:
+            source = CONFIG_PATH.pyproject
         document = load_pyproject_toml(source, modifiable=False)
         if isinstance(source, str):
             return cls(document)
@@ -120,7 +122,7 @@ class Pyproject:
 
 
 @frozen
-class ModifiablePyproject(Pyproject, AbstractContextManager):
+class ModifiablePyproject(Pyproject, ModifiableFile):
     """Stateful representation of a :code:`pyproject.toml` file.
 
     Use this class to apply multiple modifications to a :code:`pyproject.toml` file in
@@ -132,8 +134,10 @@ class ModifiablePyproject(Pyproject, AbstractContextManager):
 
     @override
     @classmethod
-    def load(cls: type[T], source: IO | Path | str = CONFIG_PATH.pyproject) -> T:
+    def load(cls, source: IO | Path | str | None = None) -> Self:
         """Load a :code:`pyproject.toml` file from a file, I/O stream, or `str`."""
+        if source is None:
+            source = CONFIG_PATH.pyproject
         if isinstance(source, io.IOBase):
             current_position = source.tell()
             source.seek(0)

@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import io
 import sys
-from contextlib import AbstractContextManager
 from pathlib import Path
 from textwrap import indent
 from typing import IO, TYPE_CHECKING, TypeVar
 
 from compwa_policy.errors import PrecommitError
 from compwa_policy.utilities import CONFIG_PATH
+from compwa_policy.utilities.file import ModifiableFile
 from compwa_policy.utilities.precommit.getters import find_repo, find_repo_with_index
 from compwa_policy.utilities.precommit.setters import (
     remove_precommit_hook,
@@ -23,6 +23,10 @@ if sys.version_info < (3, 11):
     from typing_extensions import Self
 else:
     from typing import Self
+if sys.version_info < (3, 12):
+    from typing_extensions import override
+else:
+    from typing import override
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -57,8 +61,10 @@ class Precommit:
         return self.__source
 
     @classmethod
-    def load(cls: type[T], source: IO | Path | str = CONFIG_PATH.precommit) -> T:
+    def load(cls, source: IO | Path | str | None = None) -> Self:
         """Load a :code:`pyproject.toml` file from a file, I/O stream, or `str`."""
+        if source is None:
+            source = CONFIG_PATH.precommit
         config, parser = _load_roundtrip_precommit_config(source)
         if isinstance(source, str):
             return cls(config, parser)
@@ -78,13 +84,18 @@ class Precommit:
         return find_repo_with_index(self.__document, search_pattern)
 
 
-class ModifiablePrecommit(Precommit, AbstractContextManager):
+class ModifiablePrecommit(Precommit, ModifiableFile):
     def __init__(
         self, document: PrecommitConfig, parser: YAML, source: IO | Path | None = None
     ) -> None:
         super().__init__(document, parser, source)
         self.__is_in_context = False
         self.__changelog: list[str] = []
+
+    @classmethod
+    @override
+    def load(cls, source: IO | Path | str | None = None) -> Self:
+        return super().load(source)
 
     def __enter__(self) -> Self:
         self.__is_in_context = True

@@ -35,6 +35,7 @@ api_target_substitutions: dict[str, str | tuple[str, str]] = {
     "PyprojectTOML": "dict",
     "PythonVersion": "str",
     "RemovedKeys": ("obj", "compwa_policy.utilities.vscode.RemovedKeys"),
+    "Self": ("obj", "typing.Self"),
     "Sequence": "typing.Sequence",
     "T": "typing.TypeVar",
     "Table": "tomlkit.items.Table",
