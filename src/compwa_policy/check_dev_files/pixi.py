@@ -43,7 +43,7 @@ def main(
             gitignore, is_python_package, dev_python_version, outsource_pixi_to_tox
         )
     else:
-        _remove_pixi_configuration()
+        _remove_pixi_configuration(gitignore)
 
 
 def _update_pixi_configuration(
@@ -76,10 +76,10 @@ def _update_pixi_configuration(
             do(__outsource_pixi_tasks_to_tox, pyproject)
         if has_pixi_config(pyproject):
             do(
-                gitattributes.append_safe,
+                gitattributes.append,
                 "pixi.lock linguist-language=YAML linguist-generated=true",
             )
-            do(gitignore.append_safe, ".pixi/")
+            do(gitignore.append, ".pixi/")
 
 
 def __configure_setuptools_scm(pyproject: ModifiablePyproject) -> None:
@@ -392,13 +392,14 @@ def ___outsource_cmd(task: Table, other_task_name: str) -> bool:
     return False
 
 
-def _remove_pixi_configuration() -> None:
+def _remove_pixi_configuration(gitignore: LineEditor) -> None:
     with Executor() as do, ModifiablePyproject.load() as pyproject:
         do(__remove_pixi_configuration, pyproject)
         do(
             vscode.remove_settings,
             {"files.associations": ["**/pixi.lock", "pixi.lock"]},
         )
+        do(gitignore.remove, r"(\*\*?/)?(\.pixi/?|pixi\.lock)", regex=True)
 
 
 def __remove_pixi_configuration(pyproject: ModifiablePyproject) -> None:

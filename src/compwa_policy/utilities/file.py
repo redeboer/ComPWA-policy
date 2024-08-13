@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import re
 import sys
 from abc import ABC, abstractmethod
 from contextlib import AbstractContextManager
@@ -113,11 +114,11 @@ class LineEditor(ModifiableFile):
         self.__assert_is_in_context()
         return self.__changelog
 
-    def append_safe(self, line: str) -> None:
+    def append(self, line: str, no_duplicate: bool = True) -> None:
         self.__assert_is_in_context()
         if self.__lines is None:
             self.__lines = []
-        if line in {s.strip() for s in self.__lines}:
+        if no_duplicate and line in {s.strip() for s in self.__lines}:
             return
         self.__lines.append(line)
         msg = f'Appended line "{line}"'
@@ -125,11 +126,14 @@ class LineEditor(ModifiableFile):
             msg += f" to {self.__source}"
         self.__changelog.append(msg)
 
-    def remove(self, line: str) -> None:
+    def remove(self, line: str, regex: bool = False) -> None:
         self.__assert_is_in_context()
         if self.__lines is None:
             return
-        new_lines = [s for s in self.__lines if line != s.strip()]
+        if regex:
+            new_lines = [s for s in self.__lines if not re.match(line, s.strip())]
+        else:
+            new_lines = [s for s in self.__lines if line != s.strip()]
         if new_lines != self.__lines:
             msg = f'Removed line "{line}"'
             if isinstance(self.__source, Path):
