@@ -66,10 +66,10 @@ class Pyproject:
     """Read-only representation of a :code:`pyproject.toml` file."""
 
     _document: PyprojectTOML
-    _source: IO | Path | None = field(default=None)
+    _source: IO[str] | Path | None = field(default=None)
 
     @classmethod
-    def load(cls, source: IO | Path | str | None = None) -> Self:
+    def load(cls, source: IO[str] | Path | str | None = None) -> Self:
         """Load a :code:`pyproject.toml` file from a file, I/O stream, or `str`."""
         if source is None:
             source = CONFIG_PATH.pyproject
@@ -134,7 +134,7 @@ class ModifiablePyproject(Pyproject, ModifiableFile):
 
     @override
     @classmethod
-    def load(cls, source: IO | Path | str | None = None) -> Self:
+    def load(cls, source: IO[str] | Path | str | None = None) -> Self:
         """Load a :code:`pyproject.toml` file from a file, I/O stream, or `str`."""
         if source is None:
             source = CONFIG_PATH.pyproject
@@ -182,7 +182,7 @@ class ModifiablePyproject(Pyproject, ModifiableFile):
         msg += indent("\n".join(self._changelog), prefix="  - ")
         raise PrecommitError(msg)
 
-    def dump(self, target: IO | Path | str | None = None) -> None:
+    def dump(self, target: IO[str] | Path | str | None = None) -> None:
         if target is None and self._source is None:
             msg = "Target required when source is not a file or I/O stream"
             raise ValueError(msg)
@@ -307,7 +307,9 @@ def _has_setup_cfg_build_system() -> bool:
     return cfg.has_section("metadata")
 
 
-def load_pyproject_toml(source: IO | Path | str, modifiable: bool) -> PyprojectTOML:
+def load_pyproject_toml(
+    source: IO[str] | Path | str, modifiable: bool
+) -> PyprojectTOML:
     """Load a :code:`pyproject.toml` file from a file, I/O stream, or `str`.
 
     The :code:`modifiable` flag determines which parser to use:

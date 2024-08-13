@@ -42,7 +42,10 @@ class Precommit:
     """Read-only representation of a :code:`.pre-commit-config.yaml` file."""
 
     def __init__(
-        self, document: PrecommitConfig, parser: YAML, source: IO | Path | None = None
+        self,
+        document: PrecommitConfig,
+        parser: YAML,
+        source: IO[str] | Path | None = None,
     ) -> None:
         self.__document = document
         self.__parser = parser
@@ -57,11 +60,11 @@ class Precommit:
         return self.__parser
 
     @property
-    def source(self) -> IO | Path | None:
+    def source(self) -> IO[str] | Path | None:
         return self.__source
 
     @classmethod
-    def load(cls, source: IO | Path | str | None = None) -> Self:
+    def load(cls, source: IO[str] | Path | str | None = None) -> Self:
         """Load a :code:`pyproject.toml` file from a file, I/O stream, or `str`."""
         if source is None:
             source = CONFIG_PATH.precommit
@@ -86,7 +89,10 @@ class Precommit:
 
 class ModifiablePrecommit(Precommit, ModifiableFile):
     def __init__(
-        self, document: PrecommitConfig, parser: YAML, source: IO | Path | None = None
+        self,
+        document: PrecommitConfig,
+        parser: YAML,
+        source: IO[str] | Path | None = None,
     ) -> None:
         super().__init__(document, parser, source)
         self.__is_in_context = False
@@ -94,7 +100,7 @@ class ModifiablePrecommit(Precommit, ModifiableFile):
 
     @classmethod
     @override
-    def load(cls, source: IO | Path | str | None = None) -> Self:
+    def load(cls, source: IO[str] | Path | str | None = None) -> Self:
         return super().load(source)
 
     def __enter__(self) -> Self:
@@ -120,7 +126,7 @@ class ModifiablePrecommit(Precommit, ModifiableFile):
         msg += indent("\n".join(self.__changelog), prefix="  - ")
         raise PrecommitError(msg)
 
-    def dump(self, target: IO | Path | str | None = None) -> None:
+    def dump(self, target: IO[str] | Path | str | None = None) -> None:
         if target is None:
             if self.source is None:
                 msg = "Target required when source is not a file or I/O stream"
@@ -162,7 +168,7 @@ class ModifiablePrecommit(Precommit, ModifiableFile):
 
 
 def _load_roundtrip_precommit_config(
-    source: IO | Path | str = CONFIG_PATH.precommit,
+    source: IO[str] | Path | str = CONFIG_PATH.precommit,
 ) -> tuple[PrecommitConfig, YAML]:
     """Load the pre-commit config as a round-trip YAML object."""
     parser = create_prettier_round_trip_yaml()

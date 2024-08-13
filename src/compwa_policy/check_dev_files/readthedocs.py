@@ -19,7 +19,8 @@ if TYPE_CHECKING:
 
 
 def main(
-    python_version: PythonVersion, source: IO | Path | str = CONFIG_PATH.readthedocs
+    python_version: PythonVersion,
+    source: IO[str] | Path | str = CONFIG_PATH.readthedocs,
 ) -> None:
     if isinstance(source, str):
         source = Path(source)
@@ -106,7 +107,7 @@ def __find_step(steps: list[str], pattern: str, invert: bool = False) -> int | N
 
 
 class ReadTheDocs:
-    def __init__(self, source: IO | Path | str) -> None:
+    def __init__(self, source: IO[str] | Path | str) -> None:
         self.__parser = create_prettier_round_trip_yaml()
         self.changelog: list[str] = []
         self.source = source
@@ -116,7 +117,7 @@ class ReadTheDocs:
         else:
             self.document = cast(dict, self.__parser.load(source))
 
-    def dump(self, target: IO | Path | str | None = None) -> None:
+    def dump(self, target: IO[str] | Path | str | None = None) -> None:
         if target is None:
             target = self.source
         if isinstance(target, (Path, str)):
