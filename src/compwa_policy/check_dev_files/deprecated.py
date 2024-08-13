@@ -1,20 +1,26 @@
 """Remove deprecated linters and formatters."""
 
+from __future__ import annotations
+
 import os
+from typing import TYPE_CHECKING
 
 from compwa_policy.errors import PrecommitError
-from compwa_policy.utilities import remove_configs, remove_from_gitignore, vscode
+from compwa_policy.utilities import remove_configs, vscode
 from compwa_policy.utilities.executor import Executor
-from compwa_policy.utilities.precommit import ModifiablePrecommit
+
+if TYPE_CHECKING:
+    from compwa_policy.utilities.file import LineEditor
+    from compwa_policy.utilities.precommit import ModifiablePrecommit
 
 
 def remove_deprecated_tools(
-    precommit: ModifiablePrecommit, keep_issue_templates: bool
+    gitignore: LineEditor, precommit: ModifiablePrecommit, *, keep_issue_templates: bool
 ) -> None:
     with Executor() as do:
         if not keep_issue_templates:
             do(_remove_github_issue_templates)
-        do(_remove_markdownlint, precommit)
+        do(_remove_markdownlint, gitignore, precommit)
         for directory in ["docs", "doc"]:
             do(_remove_relink_references, directory)
 
@@ -26,10 +32,10 @@ def _remove_github_issue_templates() -> None:
     ])
 
 
-def _remove_markdownlint(precommit: ModifiablePrecommit) -> None:
+def _remove_markdownlint(gitignore: LineEditor, precommit: ModifiablePrecommit) -> None:
     with Executor() as do:
         do(remove_configs, [".markdownlint.json", ".markdownlint.yaml"])
-        do(remove_from_gitignore, ".markdownlint.json")
+        do(gitignore.remove, ".markdownlint.json")
         do(
             vscode.remove_extension_recommendation,
             # cspell:ignore davidanson markdownlint

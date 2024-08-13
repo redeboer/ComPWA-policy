@@ -38,7 +38,9 @@ from compwa_policy.check_dev_files import (
     vscode,
 )
 from compwa_policy.check_dev_files.deprecated import remove_deprecated_tools
+from compwa_policy.utilities import CONFIG_PATH
 from compwa_policy.utilities.executor import Executor
+from compwa_policy.utilities.file import LineEditor
 from compwa_policy.utilities.precommit import ModifiablePrecommit
 
 if TYPE_CHECKING:
@@ -59,7 +61,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     with Executor(
         raise_exception=False
-    ) as do, ModifiablePrecommit.load() as precommit_config:
+    ) as do, ModifiablePrecommit.load() as precommit_config, LineEditor.load(
+        CONFIG_PATH.gitignore
+    ) as gitignore:
         do(citation.main, precommit_config)
         do(commitlint.main)
         do(conda.main, dev_python_version, package_managers)
@@ -88,6 +92,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         do(nbstripout.main, precommit_config, _to_list(args.allowed_cell_metadata))
         do(
             pixi.main,
+            gitignore,
             package_managers,
             is_python_repo,
             dev_python_version,
@@ -119,7 +124,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                 frequency=args.pin_requirements,
             )
         do(readthedocs.main, dev_python_version)
-        do(remove_deprecated_tools, precommit_config, args.keep_issue_templates)
+        do(
+            remove_deprecated_tools,
+            gitignore,
+            precommit_config,
+            keep_issue_templates=args.keep_issue_templates,
+        )
         do(vscode.main, has_notebooks)
         do(gitpod.main, use_gitpod, dev_python_version)
         do(precommit.main, precommit_config, has_notebooks)

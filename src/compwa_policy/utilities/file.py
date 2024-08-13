@@ -125,6 +125,18 @@ class LineEditor(ModifiableFile):
             msg += f" to {self.__source}"
         self.__changelog.append(msg)
 
+    def remove(self, line: str) -> None:
+        self.__assert_is_in_context()
+        if self.__lines is None:
+            return
+        new_lines = [s for s in self.__lines if line != s.strip()]
+        if new_lines != self.__lines:
+            msg = f'Removed line "{line}"'
+            if isinstance(self.__source, Path):
+                msg += f" to {self.__source}"
+            self.__changelog.append(msg)
+            self.__lines = new_lines
+
     def __assert_is_in_context(self) -> None:
         if not self.__is_in_context:
             msg = "Modifications can only be made within a context"

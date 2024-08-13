@@ -32,6 +32,7 @@ if TYPE_CHECKING:
 
 
 def main(
+    gitignore: LineEditor,
     package_managers: set[PackageManagerChoice],
     is_python_package: bool,
     dev_python_version: PythonVersion,
@@ -39,20 +40,21 @@ def main(
 ) -> None:
     if "pixi" in package_managers:
         _update_pixi_configuration(
-            is_python_package, dev_python_version, outsource_pixi_to_tox
+            gitignore, is_python_package, dev_python_version, outsource_pixi_to_tox
         )
     else:
         _remove_pixi_configuration()
 
 
 def _update_pixi_configuration(
+    gitignore: LineEditor,
     is_python_package: bool,
     dev_python_version: PythonVersion,
     outsource_pixi_to_tox: bool,
 ) -> None:
     with Executor() as do, ModifiablePyproject.load() as pyproject, LineEditor.load(
-        CONFIG_PATH.gitignore
-    ) as gitignore, LineEditor.load(CONFIG_PATH.gitattributes) as gitattributes:
+        CONFIG_PATH.gitattributes
+    ) as gitattributes:
         do(__configure_setuptools_scm, pyproject)
         do(__define_minimal_project, pyproject)
         if is_python_package:
