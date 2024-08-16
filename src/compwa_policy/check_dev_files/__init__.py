@@ -62,8 +62,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     with ExitStack() as stack:
         do = stack.enter_context(Executor(raise_exception=False))
-        precommit_config = stack.enter_context(ModifiablePrecommit.load())
         gitignore = stack.enter_context(LineEditor.load(CONFIG_PATH.gitignore))
+        precommit_config = stack.enter_context(ModifiablePrecommit.load())
         do(citation.main, precommit_config)
         do(commitlint.main)
         do(conda.main, dev_python_version, package_managers)
