@@ -68,7 +68,7 @@ class LineEditor(ModifiableFile):
     ) -> bool:
         if exc_type is not None and not issubclass(exc_type, PrecommitError):
             return False
-        if self.__lines == self.__original_lines:
+        if self.formatted_lines == self.__original_lines:
             return True
         self.dump(self.__source)
         msg = f"The following modifications were made to {self.__source}"
