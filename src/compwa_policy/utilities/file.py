@@ -70,6 +70,12 @@ class LineEditor(ModifiableFile):
             return False
         if self.formatted_lines == self.__original_lines:
             return True
+        if not self.formatted_lines and isinstance(self.__source, Path):
+            if not self.__source.exists():
+                return True
+            self.__source.unlink()
+            msg = f"\nRemoved {self.__source}"
+            raise PrecommitError(msg)
         self.dump(self.__source)
         msg = f"The following modifications were made to {self.__source}"
         msg += ":\n"
