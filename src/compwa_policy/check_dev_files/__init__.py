@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 import sys
 from argparse import ArgumentParser
+from contextlib import ExitStack
 from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Sequence
 
@@ -59,11 +60,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     package_managers: set[conda.PackageManagerChoice] = set(
         _to_list(args.package_managers)  # type: ignore[arg-type]
     )
-    with Executor(
-        raise_exception=False
-    ) as do, ModifiablePrecommit.load() as precommit_config, LineEditor.load(
-        CONFIG_PATH.gitignore
-    ) as gitignore:
+    with ExitStack() as stack:
+        do = stack.enter_context(Executor(raise_exception=False))
+        precommit_config = stack.enter_context(ModifiablePrecommit.load())
+        gitignore = stack.enter_context(LineEditor.load(CONFIG_PATH.gitignore))
         do(citation.main, precommit_config)
         do(commitlint.main)
         do(conda.main, dev_python_version, package_managers)
