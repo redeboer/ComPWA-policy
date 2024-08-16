@@ -105,8 +105,9 @@ class LineEditor(ModifiableFile):
         if self.__lines is None:
             return []
         lines = [line.rstrip(" \t") for line in self.__lines]
-        while not lines[-1].strip():
-            lines.pop()
+        if lines:
+            while not lines[-1].strip():
+                lines.pop()
         return lines
 
     @property
