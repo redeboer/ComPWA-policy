@@ -73,7 +73,7 @@ class LineEditor(ModifiableFile):
         self.dump(self.__source)
         msg = f"The following modifications were made to {self.__source}"
         msg += ":\n"
-        msg += indent("\n".join(self.__changelog), prefix="  - ")
+        msg += indent("\n".join(self.__changelog), prefix="  ")
         raise PrecommitError(msg)
 
     def dump(self, target: IO[str] | Path | str | None = None) -> None:
@@ -135,9 +135,8 @@ class LineEditor(ModifiableFile):
         else:
             new_lines = [s for s in self.__lines if line != s.strip()]
         if new_lines != self.__lines:
-            msg = f'Removed line "{line}"'
-            if isinstance(self.__source, Path):
-                msg += f" to {self.__source}"
+            msg = "Removed the following lines:\n   "
+            msg += "   ".join(sorted(set(self.__lines) - set(new_lines)))
             self.__changelog.append(msg)
             self.__lines = new_lines
 
