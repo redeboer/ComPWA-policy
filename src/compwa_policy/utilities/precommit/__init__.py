@@ -119,7 +119,10 @@ class ModifiablePrecommit(Precommit, ModifiableFile):
             return True
         if self.parser is not None:
             self.dump(self.source)
-        msg = "The following modifications were made"
+        msg = ""
+        if exc_value is not None:
+            msg += "\n".join(exc_value.args) + "\n"
+        msg += "The following modifications were made"
         if isinstance(self.source, Path):
             msg += f" to {self.source}"
         msg += ":\n"

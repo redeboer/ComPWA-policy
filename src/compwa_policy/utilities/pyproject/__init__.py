@@ -175,7 +175,10 @@ class ModifiablePyproject(Pyproject, ModifiableFile):
             return True
         if self._source is not None:
             self.dump(self._source)
-        msg = "The following modifications were made"
+        msg = ""
+        if exc_value is not None:
+            msg += "\n".join(exc_value.args) + "\n"
+        msg += "The following modifications were made"
         if isinstance(self._source, (Path, str)):
             msg += f" to {self._source}"
         msg += ":\n"

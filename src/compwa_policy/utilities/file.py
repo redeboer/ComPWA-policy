@@ -77,7 +77,10 @@ class LineEditor(ModifiableFile):
             msg = f"\nRemoved {self.__source}"
             raise PrecommitError(msg)
         self.dump(self.__source)
-        msg = f"The following modifications were made to {self.__source}"
+        msg = ""
+        if exc_value is not None:
+            msg += "\n".join(exc_value.args) + "\n"
+        msg += f"The following modifications were made to {self.__source}"
         msg += ":\n"
         msg += indent("\n".join(self.__changelog), prefix="  ")
         raise PrecommitError(msg)
