@@ -63,6 +63,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     with ExitStack() as stack:
         do = stack.enter_context(Executor(raise_exception=False))
         gitignore = stack.enter_context(LineEditor.load(CONFIG_PATH.gitignore))
+        gitattributes = stack.enter_context(LineEditor.load(CONFIG_PATH.gitattributes))
         precommit_config = stack.enter_context(ModifiablePrecommit.load())
         do(citation.main, precommit_config)
         do(commitlint.main)
