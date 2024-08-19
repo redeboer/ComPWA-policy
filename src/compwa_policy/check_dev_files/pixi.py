@@ -12,7 +12,6 @@ from tomlkit import inline_table, string
 from compwa_policy.utilities import CONFIG_PATH, vscode
 from compwa_policy.utilities.cfg import open_config
 from compwa_policy.utilities.executor import Executor
-from compwa_policy.utilities.file import LineEditor
 from compwa_policy.utilities.match import filter_files
 from compwa_policy.utilities.pyproject import (
     ModifiablePyproject,
@@ -28,10 +27,12 @@ if TYPE_CHECKING:
     from tomlkit.items import InlineTable, String, Table
 
     from compwa_policy.check_dev_files.conda import PackageManagerChoice
+    from compwa_policy.utilities.file import LineEditor
     from compwa_policy.utilities.pyproject.getters import PythonVersion
 
 
-def main(
+def main(  # noqa: PLR0917
+    gitattributes: LineEditor,
     gitignore: LineEditor,
     package_managers: set[PackageManagerChoice],
     is_python_package: bool,
@@ -40,21 +41,24 @@ def main(
 ) -> None:
     if "pixi" in package_managers:
         _update_pixi_configuration(
-            gitignore, is_python_package, dev_python_version, outsource_pixi_to_tox
+            gitattributes,
+            gitignore,
+            is_python_package,
+            dev_python_version,
+            outsource_pixi_to_tox,
         )
     else:
-        _remove_pixi_configuration(gitignore)
+        _remove_pixi_configuration(gitattributes, gitignore)
 
 
 def _update_pixi_configuration(
+    gitattributes: LineEditor,
     gitignore: LineEditor,
     is_python_package: bool,
     dev_python_version: PythonVersion,
     outsource_pixi_to_tox: bool,
 ) -> None:
-    with Executor() as do, ModifiablePyproject.load() as pyproject, LineEditor.load(
-        CONFIG_PATH.gitattributes
-    ) as gitattributes:
+    with Executor() as do, ModifiablePyproject.load() as pyproject:
         do(__configure_setuptools_scm, pyproject)
         do(__define_minimal_project, pyproject)
         if is_python_package:
@@ -392,13 +396,16 @@ def ___outsource_cmd(task: Table, other_task_name: str) -> bool:
     return False
 
 
-def _remove_pixi_configuration(gitignore: LineEditor) -> None:
+def _remove_pixi_configuration(
+    gitattributes: LineEditor, gitignore: LineEditor
+) -> None:
     with Executor() as do, ModifiablePyproject.load() as pyproject:
         do(__remove_pixi_configuration, pyproject)
         do(
             vscode.remove_settings,
             {"files.associations": ["**/pixi.lock", "pixi.lock"]},
         )
+        do(gitattributes.remove, r"(\*\*?/)?(pixi\.lock)\s", regex=True)
         do(gitignore.remove, r"(\*\*?/)?(\.pixi/?|pixi\.lock)", regex=True)
 
 

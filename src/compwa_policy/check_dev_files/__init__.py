@@ -62,6 +62,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     with ExitStack() as stack:
         do = stack.enter_context(Executor(raise_exception=False))
+        gitattributes = stack.enter_context(LineEditor.load(CONFIG_PATH.gitattributes))
         gitignore = stack.enter_context(LineEditor.load(CONFIG_PATH.gitignore))
         gitattributes = stack.enter_context(LineEditor.load(CONFIG_PATH.gitattributes))
         precommit_config = stack.enter_context(ModifiablePrecommit.load())
@@ -93,6 +94,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         do(nbstripout.main, precommit_config, _to_list(args.allowed_cell_metadata))
         do(
             pixi.main,
+            gitattributes,
             gitignore,
             package_managers,
             is_python_repo,
