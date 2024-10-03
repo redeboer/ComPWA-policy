@@ -120,10 +120,6 @@ local_scheme = "no-local-version"
 version_scheme = "post-release"
 write_to = "src/compwa_policy/version.py"
 
-[tool.coverage.run]
-branch = true
-source = ["src"]
-
 [tool.mypy]
 disallow_incomplete_defs = true
 disallow_untyped_defs = true
@@ -231,25 +227,6 @@ reportUnusedFunction = true
 reportUnusedImport = true
 reportUnusedVariable = true
 typeCheckingMode = "strict"
-
-[tool.pytest.ini_options]
-addopts = [
-    "--color=yes",
-    "--doctest-continue-on-failure",
-    "--doctest-modules",
-    "--durations-min=0",
-    "--durations=3",
-]
-filterwarnings = [
-    "error",
-    "ignore: Importing ErrorTree directly from the jsonschema package is deprecated.*",
-    "ignore: The `hash` argument is deprecated in favor of `unsafe_hash` and will be removed in or after August 2025.:DeprecationWarning",
-]
-markers = ["slow: marks tests as slow (deselect with '-m \"not slow\"')"]
-testpaths = [
-    "src",
-    "tests",
-]
 
 [tool.ruff]
 extend-exclude = ["typings"]
