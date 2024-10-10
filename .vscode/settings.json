@@ -55,6 +55,7 @@
   "notebook.formatOnSave.enabled": true,
   "python.analysis.autoImportCompletions": false,
   "python.analysis.inlayHints.pytestParameters": true,
+  "python.experiments.optInto": ["pythonTestAdapter"],
   "python.terminal.activateEnvironment": false,
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
