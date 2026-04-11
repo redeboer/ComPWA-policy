@@ -27,7 +27,7 @@ __INCORRECT_TAPLO_CONFIG_PATHS = [
 ]
 
 
-def main(precommit: ModifiablePrecommit) -> None:
+def main(precommit: ModifiablePrecommit, formatter: str = "taplo") -> None:
     trigger_files = [
         CONFIG_PATH.pyproject,
         CONFIG_PATH.taplo,
@@ -36,13 +36,47 @@ def main(precommit: ModifiablePrecommit) -> None:
     if not any(f.exists() for f in trigger_files):
         return
     with Executor() as do:
-        do(_rename_taplo_config)
-        do(_update_taplo_config)
-        do(_rename_precommit_url, precommit)
-        do(_update_precommit_repo, precommit)
-        do(_update_tomlsort_config)
-        do(_update_tomlsort_hook, precommit)
-        do(_update_vscode_extensions)
+        if formatter == "taplo":
+            do(_rename_taplo_config)
+            do(_update_taplo_config)
+            do(_rename_precommit_url, precommit)
+            do(_update_precommit_repo, precommit)
+            do(_update_tomlsort_config)
+            do(_update_tomlsort_hook, precommit)
+            do(_update_vscode_extensions)
+            do(_remove_tombi_hook_and_config, precommit)
+        elif formatter == "tombi":
+            do(_remove_taplo_hook_and_config, precommit)
+            do(_remove_tomlsort_hook_and_config, precommit)
+            do(_add_tombi_hook_and_config, precommit)
+        else:
+            msg = f"Unknown TOML formatter: {formatter}"
+            raise ValueError(msg)
+
+
+def _remove_taplo_hook_and_config(precommit: ModifiablePrecommit) -> None:
+    # Remove taplo pre-commit hook and config file
+    # Remove taplo.toml and taplo-pre-commit repo from precommit config
+    # Implementation stub
+    pass
+
+
+def _remove_tomlsort_hook_and_config(precommit: ModifiablePrecommit) -> None:
+    # Remove toml-sort pre-commit hook and config section
+    # Implementation stub
+    pass
+
+
+def _remove_tombi_hook_and_config(precommit: ModifiablePrecommit) -> None:
+    # Remove tombi pre-commit hook and config file
+    # Implementation stub
+    pass
+
+
+def _add_tombi_hook_and_config(precommit: ModifiablePrecommit) -> None:
+    # Add tombi pre-commit hook and config file/section
+    # Implementation stub
+    pass
 
 
 def _update_tomlsort_config() -> None:

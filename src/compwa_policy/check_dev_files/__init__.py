@@ -123,7 +123,9 @@ def main(argv: Sequence[str] | None = None) -> int:  # noqa: C901, PLR0915
             args.dev_python_version,
         )
         do(direnv.main, args.package_manager, environment_variables)
-        do(toml.main, precommit_config)  # has to run before pre-commit
+        do(
+            toml.main, precommit_config, args.toml_formatter
+        )  # has to run before pre-commit
         do(poe.main, has_notebooks, args.package_manager)
         do(prettier.main, precommit_config)
         if is_python_repo:
@@ -402,6 +404,12 @@ def _create_argparse() -> argparse.ArgumentParser:
             "and pip .constraints/ files. The argument is the frequency of the cron job"
         ),
     )
+    parser.add_argument(
+        "--toml-formatter",
+        choices=["taplo", "tombi"],
+        default="taplo",
+        help="Choose TOML formatter: taplo or tombi (mutually exclusive).",
+    )
     return parser
 
 
@@ -440,6 +448,7 @@ class Arguments:
     repo_title: str
     type_checker: set[ty.TypeChecker]
     upgrade_frequency: upgrade_lock.Frequency
+    toml_formatter: str
 
 
 def _get_environment_variables(arg: str) -> dict[str, str]:
